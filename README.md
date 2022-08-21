@@ -1,2 +1,6 @@
 # 2022summer_internship
-2022 summer internship(2022年暑假实习项目，前端)
+We have developed a big data analysis platform for house price and occupation， 
+This is so simple, but it is my first web projects.
+
+# project introduction
+W
