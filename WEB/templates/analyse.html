@@ -1,0 +1,134 @@
+{#页面布局，由陈季烨完成#}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script src="{{ url_for( 'static',filename='js/echarts.min.js')}}"></script>
+		<script src="{{ url_for( 'static',filename='js/jquery.js')}}"></script>
+        <!-- name="viewport"表示视口，用于适配网页的大小 initial-scale=1.0表示初始化缩放大小为1.0 -->
+        <title>预测分析结果</title>
+        <link rel="stylesheet" href="{{url_for('static',filename='css/analyse.css')}}">
+    </head>
+
+    <body>
+        <!--头部的盒子-->
+        <header>
+            <h1>
+                城市具体预测分析结果
+            </h1>
+            <div class="showTime">显示时间的地方</div>
+            <script>
+                var t=null;
+                t = setTimeout(time,1000);//开始运行
+                function time() {
+                    clearTimeout(t);//清除定时器
+                    dt = new Date();
+                    var y = dt.getFullYear();
+                    var mt = dt.getMonth()+1;
+                    var day = dt.getDate();
+                    var h = dt.getHours();
+                    var m = dt.getMinutes();
+                    var s = dt.getSeconds();
+                    document.querySelector(".showTime").innerHTML =
+                        "当前时间：" +
+                        y +
+                        "年" + mt + "月" + day + "日" + h + "时" + m + "分" + s + "秒";
+                    t = setTimeout(time, 1000)
+                }
+            </script>
+        </header>
+        <!--页面主体-->
+        <section class="mainbox">
+            <div class="column">
+                <div class="panel bar" width="100%">
+                    <h2>市场在租房屋数量比</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel pie">
+                    <h2>租房价格分布图</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+            </div>
+            <!-- 第2列的图 -->
+            <div class="panel analysis1" width="100%">
+                <h2>分析图</h2>
+                <div class="chart">pic</div>
+                <div class="panel-foot"></div>
+            </div>
+            <div class="panel center2">
+                <h2>各区房价对比</h2>
+                <div class="chart"></div>
+                <div class="panel-foot"></div>
+            </div>
+            <!--第三列的图-->
+            <div class="column">
+                <div class="panel analysis2">
+                    <br>
+                    <h1>分析结论</h1><br>
+                    <h3>{{ conclusion['salary_txt'] }}</h3><br>
+                    <h2>购房分析</h2>
+                    <h3>{{ conclusion['buy_txt'] }}</h3><br>
+                    <h2>租房分析</h2>
+                    <h3>{{ conclusion['rent_txt'] }}</h3>
+                    <div class="panel-foot"></div>
+                </div>
+            </div>
+            <!-- 第四列的图 -->
+            <div class="column">
+                <div class="panel bar2">
+                    <h2>市场待售房屋数量比</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel pie2">
+                    <h2>购房价格分布图</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+            </div>
+        </section>
+        <script src="{{ url_for( 'static',filename='js/flexible.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_left1.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_right1.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_cl1.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_cr2.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_right2.js') }}"></script>
+        <script src="{{ url_for( 'static',filename='js/analyse/al_left2.js') }}"></script>
+{#        脚本传参，由曾培益完成    #}
+        <script>
+            var buyDis = [
+                {% for item in  buyDistr  %}
+                    {name: '{{ item }}', value: {{ buyDistr[item] }}},
+                {% endfor %}
+            ];
+            var rentPercent = [
+                {% for item in rentPer %}
+                  {name: '{{ item }}',value: {{ rentPer[item] }}},
+                {% endfor %}
+            ];
+            var rentDis=[
+						{% for item in rentDistr %}
+						{name: '{{ item }}',value: {{ rentDistr[item] }}},
+    					{% endfor %}
+	        ];
+            var buyPercent=[
+                            {% for item in buyPer%}
+                            {name: '{{ item }}',value: {{buyPer[item]}}},
+                            {% endfor %}
+            ];
+            sz_cl1({{ wbx }});
+            sz_cr2({{rentPrice}},{{ buyPrice }},{{ distrName|tojson }});
+            sz_left1(rentPercent);
+            sz_left2(rentDis,{{ Map }});
+            sz_right1(buyPercent);
+            sz_right2(buyDis,{{ Map }});
+            //l2、r2都是热力图
+        </script>
+    </body>
+</html>
+<!--在flexible中设置分为24等分-->
+<!--在index.less中设置box和长宽-->
+<!--cssrem中可以设置默认大小Root Font Size 这里改成了80px-->

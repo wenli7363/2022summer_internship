@@ -1,0 +1,201 @@
+{#页面布局，由陈季烨完成#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+     <!--name="viewport"表示视口，用于适配网页的大小 initial-scale=1.0表示初始化缩放大小为1.0-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <script src="{{ url_for( 'static',filename='js/echarts.min.js') }}"></script>
+    <script src="{{ url_for( 'static',filename='js/jquery.js') }}"></script>
+    <script src="{{ url_for( 'static',filename='js/china.js') }}"></script>
+    <title>职业与房价数据分析平台</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/index.css') }}">
+</head>
+
+<body>
+<!--头部的盒子-->
+{#  都是用类选择器进行排版的  #}
+<header>
+    <h1>职业与房价数据分析平台</h1>
+            <div class="showTime">显示时间的地方</div>
+{#    实时获取时间模块，由曾培益完成    #}
+            <script>
+                var t=null;
+                t = setTimeout(time,1000);//开始运行
+                function time() {
+                    clearTimeout(t);//清除定时器
+                    dt = new Date();
+                    var y = dt.getFullYear();
+                    var mt = dt.getMonth()+1;
+                    var day = dt.getDate();
+                    var h = dt.getHours();
+                    var m = dt.getMinutes();
+                    var s = dt.getSeconds();
+                    document.querySelector(".showTime").innerHTML = 
+                    "当前时间："+
+                    y+
+                    "年"+mt+"月"+day+"日"+h+"时"+m+"分"+s+"秒";
+                    t = setTimeout(time,1000)
+                }
+            </script>
+        </header>
+        <!--页面主体-->
+        <section class="mainbox">
+            <div class="column">
+                <div class="panel bar">
+                    <h2>四大岗位平均薪资数和岗位数</h2>
+                    <div class="chart">{{ va1 }}</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel line">
+                    <h2>每个月岗位数量波动(单位:K)</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel pine">    
+                    <h2>七大区岗位数据采集量</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+            </div>
+            <div class="column">
+                <!--no模块-->
+                <div class="no">
+                    <div class="no-hd">
+                        <h3 align="center" >分析系统</h3><br>
+                        <!--正文-->
+                        <div class="no-hd-tt">
+                            <p style="display: inline;">您的心仪岗位是</p>
+{#                            下拉列表，用户可以选择岗位                 #}
+                            <select name="jobSelectbox" id="jobSelectbox">
+                                <option value="开发">开发</option>
+                                <option value="算法">算法</option>
+                                <option value="前端">前端</option>
+                                <option value="测试">测试</option>
+                            </select>
+                            <p style="display:inline;">您的心仪城市是</p>
+{#                            设置了一个下拉列表，用户可以选择以下城市                  #}
+                            <select name="cusSelectbox" id="cusSelectbox" data-mini="true" data-iconpos="left">
+                                <option value="北京">北京</option>
+                                <option value="上海">上海</option>
+                                <option value="广州">广州</option>
+                                <option value="深圳">深圳</option>
+                                <option value="武汉">武汉</option>
+                                <option value="西安">西安</option>
+                                <option value="天津">天津</option>
+                                <option value="成都">成都</option>
+                                <option value="长春">长春</option>
+                                <option value="杭州">杭州</option>
+                                <option value="南宁">南宁</option>
+                                <option value="福州">福州</option>
+                                <option value="长沙">长沙</option>
+                                <option value="呼和浩特">呼和浩特</option>
+                                <option value="重庆">重庆</option>
+{#                                以下城市因为数据等原因显示效果不是很好，就删除了        #}
+{#                                <option value="郑州">郑州</option>#}
+{#                                <option value="苏州">苏州</option>#}
+{#                                <option value="合肥">合肥</option>#}
+{#                                <option value="厦门">厦门</option>#}
+{#                                <option value="济南">济南</option>#}
+{#                                <option value="哈尔滨">哈尔滨</option>#}
+{#                                <option value="大连">大连</option>#}
+{#                                <option value="青岛">青岛</option>#}
+{#                                <option value="南昌">南昌</option>#}
+{#                                <option value="海口">海口</option>#}
+{#                                <option value="乌鲁木齐">乌鲁木齐</option>#}
+{#                                <option value="贵阳">贵阳</option>#}
+{#                                <option value="南京">南京</option>#}
+{#                                <option value="石家庄">石家庄</option>#}
+{#                                <option value="宁波">宁波</option>#}
+{#                                <option value="沈阳">沈阳</option>#}
+{#                                <option value="兰州">兰州</option>#}
+{#                                <option value="昆明">昆明</option>#}
+{#                                <option value="太原">太原</option>#}
+                            </select>
+{#      下面这段脚本用来获取用户从下拉列表中选择的选项                #}
+{#           下面的脚本由曾培益完成             #}
+        <script>
+            function analyse(){
+                {#获取用户的下拉列表中的选项#}
+                var job=document.getElementById("jobSelectbox").value;
+                var city=document.getElementById("cusSelectbox").value;
+                var jobArg=null;
+                switch (job) {
+                    case "前端": {
+                        jobArg = 'qd';
+                        break;
+                    }
+                    case "算法": {
+                        jobArg = 'sf';
+                        break;
+                    }
+                    case "测试": {
+                        jobArg = 'cs';
+                        break;
+                    }
+                    case "开发": {
+                        jobArg = 'kf';
+                        break;
+                    }
+                    default:
+                        jobArg = "";
+                }
+                {#拼接一个新的url地址，完成页面跳转#}
+                window.open("../analyse?city=" + city + "&job=" + jobArg);
+            }
+        </script>
+                            <button type="button" id="analyse" onclick="analyse()">开始分析</button>
+                        </div>
+                    </div>
+
+                </div>
+                <!--中国地图模块-->
+                <div class="map"></div>
+                <div class="map-foot"></div>
+            </div>
+            <div class="column">
+                <!-- 全部套用panel类 -->
+                <div class="panel bar2">    
+                    <h2>四大城市数据对比</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel line2">
+                    <h2>七大区房价对比</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+                <div class="panel pine2">
+                    <h2>七大区房屋数据采集量</h2>
+                    <div class="chart">图表</div>
+                    <div class="panel-foot"></div>
+                </div>
+            </div>
+        </section>
+<script src="{{ url_for( 'static',filename='js/flexible.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/china_map.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_left1.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_left2.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_left3.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_right3.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_right2.js') }}"></script>
+<script src="{{ url_for( 'static',filename='js/ec_right1.js') }}"></script>
+{#下面的脚本是获取参数的，由曾培益完成#}
+<script>
+    ec_left1({{ avg_sal }}, {{ avg_num }});
+    ec_left2({{ kf_value }}, {{ qd_value }}, {{ sf_value }}, {{ cs_value }});
+    ec_left3();
+    ec_right1({{ er1[0] }}, {{ er1[1] }}, {{ er1[2] }}, {{ er1[3] }});
+    ec_right2({{ buy_list }}, {{ rent_list }});
+    ec_right3();
+    var chiMap = [
+        {% for item in chinaMap%}
+            {name: '{{ item }}', value: {{chinaMap[item]}}},
+        {% endfor %}];
+    china_map(chiMap);
+</script>
+</body>
+</html>
+<!--在flexible中设置分为24等分-->
+<!--在index.less中设置box和长宽-->
+<!--cssrem中可以设置默认大小Root Font Size 这里改成了80px-->
